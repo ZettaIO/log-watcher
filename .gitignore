@@ -1,0 +1,13 @@
+# pythons stuff
+__pycache__
+dist/
+build/
+*.egg-info
+*.pyc
+.venv
+
+# local
+.vscode
+env.sh
+dag.txt
+logs/
