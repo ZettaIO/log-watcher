@@ -7,13 +7,11 @@ from log_watcher import config, sms
 
 
 def process(line, history=False):
-    if history:
-        print '=', line.strip('\n')
-    else:
-        print '>', line.strip('\n')
+    # if history:
+    #     print '=', line.strip('\n')
+    # else:
+    #     print '>', line.strip('\n')
 
-    print 'pattern', config.pattern
-    print 'line', line
     if config.pattern:
         if config.pattern in line:
             print('yep')
