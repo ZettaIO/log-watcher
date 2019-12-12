@@ -7,9 +7,12 @@ from log_watcher import config, sms
 
 
 def process(line, history=False):
-    if config.pattern:
-        if config.pattern in line:
-            sms.send()
+    if config.patterns:
+        for pattern in config.patterns:
+            if pattern in line:
+                print line
+                print "Line above matches pattern: pattern"
+                sms.send()
 
 
 def follow(config, from_beginning=False):    

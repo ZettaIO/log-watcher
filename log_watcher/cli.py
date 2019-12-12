@@ -17,8 +17,8 @@ def main():
         help="The log file to watch",
     )
     parser.add_argument(
-        '--pattern',
-        help="The pattern to detect",
+        '--patterns',
+        help="The patterns to detect",
     )
     parser.add_argument(
         '--phone-number',
@@ -33,7 +33,7 @@ def main():
     # Fall back to env vars if needed
     config.apply(
         log_file=values.log_file,
-        pattern=values.pattern,
+        patterns=values.patterns,
         phone_number=values.phone_number,
         message=values.message,
     )
