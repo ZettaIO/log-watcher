@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import time
 import traceback
@@ -10,8 +11,8 @@ def process(line, history=False):
     if config.patterns:
         for pattern in config.patterns:
             if pattern in line:
-                print line
-                print "Line above matches pattern: pattern"
+                print(line)
+                print("Line above matches pattern: pattern")
                 sms.send()
 
 
@@ -23,10 +24,10 @@ def follow(config, from_beginning=False):
         try:
             # Check if logfile exists
             if not os.path.exists(logfile):
-                print 'logfile does not exist'
+                print('logfile does not exist')
                 time.sleep(1)
                 continue
-                print 'opening and starting to watch', logfile
+                print('opening and starting to watch', logfile)
 
             # Open the file and read it from the beginning or end
             file = open(logfile, 'r')
@@ -44,7 +45,7 @@ def follow(config, from_beginning=False):
                     if event is not None:
                         (header, type_names, watch_path, filename) = event
                         if set(type_names) & set(['IN_MOVE_SELF']): # moved
-                            print 'logfile moved'
+                            print('logfile moved')
                             notifier.remove_watch(logfile)
                             file.close()
                             time.sleep(1)

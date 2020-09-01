@@ -1,14 +1,15 @@
+from __future__ import print_function
 import os
 import json
 
 
 def parse_patterns(data):
-    print data
+    print(data)
     try:
         return json.loads(data)
     except Exception as ex:
-        print ex
-        print "Failed to parse WATCHER_PATTERNS:", data
+        print(ex)
+        print("Failed to parse WATCHER_PATTERNS:", data)
         raise
 
 
