@@ -16,9 +16,10 @@ def parse_patterns(data):
 class Config(object):
     log_file = os.environ.get("WATCHER_LOG_FILE")
     phone_number = os.environ.get("WATCHER_PHONE_NUMBER")
-    message = os.environ['WATCHER_PHONE_MESSAGE'] or "Poke!"
+    message = os.environ.get('WATCHER_PHONE_MESSAGE') or "Poke!"
     patterns = os.environ.get("WATCHER_PATTERNS")
 
+    # These are required
     sms_key = os.environ['SMS_KEY']
     sms_secret = os.environ['SMS_SECRET']
 
