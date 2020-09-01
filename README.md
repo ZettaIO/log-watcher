@@ -6,6 +6,11 @@ gatewayapi.com.
 
 This project was created in a hurry, so don't have high expectations!
 
+## Supported python version
+
+* Python 2.7
+* Python 3.5 > 3.8
+
 ## Env vars
 
 ```bash
