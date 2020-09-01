@@ -1,4 +1,3 @@
-import os
 import socket
 from requests_oauthlib import OAuth1Session
 from log_watcher import config

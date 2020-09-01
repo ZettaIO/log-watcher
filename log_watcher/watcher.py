@@ -2,12 +2,12 @@ from __future__ import print_function
 import os
 import time
 import traceback
-import threading
 import inotify.adapters
 from log_watcher import config, sms
 
 
 def process(line, history=False):
+    print("Looking for patterns:", config.patterns)
     if config.patterns:
         for pattern in config.patterns:
             if pattern in line:
@@ -16,9 +16,9 @@ def process(line, history=False):
                 sms.send()
 
 
-def follow(config, from_beginning=False):    
+def follow(config, from_beginning=False):
     notifier = inotify.adapters.Inotify()
-    logfile = config.log_file.encode()
+    logfile = config.log_file
 
     while True:
         try:
@@ -44,13 +44,13 @@ def follow(config, from_beginning=False):
                 for event in notifier.event_gen():
                     if event is not None:
                         (header, type_names, watch_path, filename) = event
-                        if set(type_names) & set(['IN_MOVE_SELF']): # moved
+                        if set(type_names) & set(['IN_MOVE_SELF']):  # moved
                             print('logfile moved')
                             notifier.remove_watch(logfile)
                             file.close()
                             time.sleep(1)
                             break
-                        elif set(type_names) & set(['IN_MODIFY']): # modified
+                        elif set(type_names) & set(['IN_MODIFY']):  # modified
                             for line in file.readlines():
                                 process(line, history=False)
             except (KeyboardInterrupt, SystemExit):

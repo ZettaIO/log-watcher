@@ -1,1 +1,1 @@
-from log_watcher.conf import config
+from log_watcher.conf import config  # noqa
