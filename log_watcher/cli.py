@@ -12,8 +12,8 @@ def main():
         choices=['watch', 'test-sms'],
     )
     parser.add_argument(
-        '--log-file',
-        help="The log file to watch",
+        '--service-name',
+        help="The logs to track in journald",
     )
     parser.add_argument(
         '--patterns',
@@ -31,7 +31,7 @@ def main():
 
     # Fall back to env vars if needed
     config.apply(
-        log_file=values.log_file,
+        service_name=values.service_name,
         patterns=values.patterns,
         phone_number=values.phone_number,
         message=values.message,

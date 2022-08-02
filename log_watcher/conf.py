@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import json
 
@@ -13,7 +12,7 @@ def parse_patterns(data):
 
 
 class Config(object):
-    log_file = os.environ.get("WATCHER_LOG_FILE")
+    service_name = os.environ.get("WATCHER_SERVICE_NAME")
     phone_number = os.environ.get("WATCHER_PHONE_NUMBER")
     message = os.environ.get('WATCHER_PHONE_MESSAGE') or "Poke!"
     patterns = os.environ.get("WATCHER_PATTERNS")
@@ -24,9 +23,9 @@ class Config(object):
 
     @classmethod
     def apply(cls, **kwargs):
-        cls.log_file = kwargs.get('log_file') or cls.log_file
+        cls.service_name = kwargs.get('service_name') or cls.service_name
         cls.patterns = parse_patterns(kwargs.get('patterns') or cls.patterns)
-        cls.phone_number = kwargs.get('phone_numbers') or cls.phone_number
+        cls.phone_number = kwargs.get('phone_number') or cls.phone_number
         cls.message = kwargs.get('message') or cls.message
 
 

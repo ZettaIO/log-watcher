@@ -1,70 +1,39 @@
-from __future__ import print_function
-import os
 import time
-import traceback
-import inotify.adapters
-from log_watcher import config, sms
+from cysystemd.reader import (
+    JournalReader,
+    JournalOpenMode,
+    Rule,
+)
+from log_watcher import sms
+
+# Use some sane send cooldown
+sms_last_sent = 0
+sms_cooldown = 10
 
 
-def process(line, history=False):
-    print("Looking for patterns:", config.patterns)
-    if config.patterns:
-        for pattern in config.patterns:
-            if pattern in line:
-                print(line)
-                print("Line above matches pattern: pattern")
-                sms.send()
-
-
-def follow(config, from_beginning=False):
-    notifier = inotify.adapters.Inotify()
-    logfile = config.log_file
+def follow(config, from_beginning=False, poll_timeout=255):
+    """Continiously read from journald"""
+    global sms_last_sent
+    reader = JournalReader()
+    reader.open(JournalOpenMode.SYSTEM)
+    reader.add_filter(Rule("SYSLOG_IDENTIFIER", config.service_name))
+    if from_beginning:
+        reader.seek_head()
+    else:
+        reader.seek_tail()
 
     while True:
-        try:
-            # Check if logfile exists
-            if not os.path.exists(logfile):
-                print('logfile does not exist')
-                time.sleep(1)
-                continue
-                print('opening and starting to watch', logfile)
+        # print(f"Waiting {poll_timeout} seconds")
+        reader.wait(poll_timeout)
+        for record in reader:
 
-            # Open the file and read it from the beginning or end
-            file = open(logfile, 'r')
-            if from_beginning:
-                for line in file.readlines():
-                    process(line, history=True)
-                else:
-                    file.seek(0, 2)
-                    from_beginning = True
+            for pattern in config.patterns:
+                if pattern in record.data["MESSAGE"]:
+                    if time.time() - sms_last_sent > sms_cooldown:
+                        sms.send()
+                        sms_last_sent = time.time()
+                    # Avoid spamming multiple messages
+                    break
 
-            # Watch for file events and react
-            notifier.add_watch(logfile)
-            try:
-                for event in notifier.event_gen():
-                    if event is not None:
-                        (header, type_names, watch_path, filename) = event
-                        if set(type_names) & set(['IN_MOVE_SELF']):  # moved
-                            print('logfile moved')
-                            notifier.remove_watch(logfile)
-                            file.close()
-                            time.sleep(1)
-                            break
-                        elif set(type_names) & set(['IN_MODIFY']):  # modified
-                            for line in file.readlines():
-                                process(line, history=False)
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                notifier.remove_watch(logfile)
-                file.close()
-                time.sleep(1)
-        except (KeyboardInterrupt, SystemExit):
-            break
-        except inotify.calls.InotifyError:
-            time.sleep(1)
-        except IOError:
-            time.sleep(1)
-        except:
-            traceback.print_exc()
-            time.sleep(1)
+            # print(record.date, record.data["MESSAGE"])
+            # print(str(record.data))
