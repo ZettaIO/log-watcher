@@ -16,16 +16,18 @@ def follow(config, from_beginning=False, poll_timeout=255):
     global sms_last_sent
     reader = JournalReader()
     reader.open(JournalOpenMode.SYSTEM)
-    reader.add_filter(Rule("SYSLOG_IDENTIFIER", config.service_name))
+    reader.add_filter(Rule("_SYSTEMD_UNIT", config.service_name))
     if from_beginning:
         reader.seek_head()
     else:
         reader.seek_tail()
 
     while True:
-        # print(f"Waiting {poll_timeout} seconds")
         reader.wait(poll_timeout)
+
         for record in reader:
+            # print(record.date, record.data["MESSAGE"])
+            # print(str(record.data))
 
             for pattern in config.patterns:
                 if pattern in record.data["MESSAGE"]:
@@ -34,6 +36,3 @@ def follow(config, from_beginning=False, poll_timeout=255):
                         sms_last_sent = time.time()
                     # Avoid spamming multiple messages
                     break
-
-            # print(record.date, record.data["MESSAGE"])
-            # print(str(record.data))
