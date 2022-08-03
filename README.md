@@ -31,7 +31,7 @@ pip install cysystemd
 
 ```bash
 # The service name to watch in journald
-WATCHER_SERVICE_NAME="dockerd"
+WATCHER_SERVICE_NAME="docker.service"
 # Pattern in log file to look for
 WATCHER_PATTERNS='["some pattern", "another pattern"]'
 # Phone number (sms). Must be in format 00<country-code><number>
